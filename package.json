@@ -28,6 +28,7 @@
     "axios": "^1.8.4",
     "babel-loader": "^9.1.2",
     "babel-preset-es2015": "^6.24.1",
+    "dotenv": "^16.5.0",
     "react": "18.2",
     "react-dom": "18.2",
     "vite": "^5.2.8"
