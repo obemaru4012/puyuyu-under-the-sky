@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const axios = require("axios");
 const path = require("path");
+const config = require("./config.js"); // 管理画面側
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
@@ -20,8 +21,8 @@ ipcMain.handle("get-session", async (event) => {
     const response = await axios.post(
       "https://bsky.social/xrpc/com.atproto.server.createSession",
       {
-        identifier: "puupuu-nasake.bsky.social",
-        password: "",
+        identifier: config.user,
+        password: config.secretToken,
       },
       {
         headers: {
@@ -30,8 +31,10 @@ ipcMain.handle("get-session", async (event) => {
         },
       }
     );
-    return response;
-  } catch (error) {}
+    return { accessJwt: response["data"]["accessJwt"] };
+  } catch (error) {
+    return { accessJwt: "" };
+  }
 });
 
 ipcMain.handle("get-profile", async (event) => {
@@ -39,7 +42,7 @@ ipcMain.handle("get-profile", async (event) => {
     const response = await axios.get(
       "https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile",
       {
-        params: { actor: "puupuu-nasake.bsky.social" },
+        params: { actor: config.user },
       }
     );
     const displayName = response["data"]["displayName"];
@@ -66,12 +69,11 @@ ipcMain.handle("get-profile", async (event) => {
 
 ipcMain.handle("get-timeline", async (event) => {
   try {
-    console.log("called get-timeline");
     const response = await axios.get(
       "https://bsky.social/xrpc/app.bsky.feed.getTimeline",
       {
         headers: {
-          Authorization: `Bearer `,
+          Authorization: `Bearer ${config.jwtToken}`,
         },
       }
     );
@@ -90,7 +92,7 @@ ipcMain.handle("get-timeline", async (event) => {
     }
     return timeLine;
   } catch (err) {
-    return { error: err.toString() };
+    return [];
   }
 });
 

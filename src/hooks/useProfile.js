@@ -34,6 +34,24 @@ const useProfile = () => {
   const changePostsCount = ({ postsCount }) => {
     setPostsCount(postsCount);
   };
+  // プロフィール一括更新
+  const changeProfile = ({
+    avatar: avatar,
+    displayName: displayName,
+    handle: handle,
+    description: description,
+    followersCount: followersCount,
+    followsCount: followsCount,
+    postsCount: postsCount,
+  }) => {
+    changeAvatar({ avatar: avatar });
+    changeDisplayName({ displayName: displayName });
+    changeHandle({ handle: handle });
+    changeDescription({ description: description });
+    changeFollowersCount({ followersCount: followersCount });
+    changeFollowsCount({ followsCount: followsCount });
+    changePostsCount({ postsCount: postsCount });
+  };
 
   return {
     avatar,
@@ -50,6 +68,7 @@ const useProfile = () => {
     changeFollowsCount,
     postsCount,
     changePostsCount,
+    changeProfile,
   };
 };
 

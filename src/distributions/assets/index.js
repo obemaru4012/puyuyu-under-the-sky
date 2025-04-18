@@ -8444,7 +8444,7 @@ function commenter(type, index) {
       break;
   return "/*" + slice(index, position - 1) + "*" + from(type === 47 ? type : next());
 }
-function identifier(index) {
+function identifier$1(index) {
   while (!token(peek()))
     next();
   return slice(index, position);
@@ -8554,7 +8554,7 @@ function parse(value, root, parent, rule, rules, rulesets, pseudo, points, decla
           case 64:
             if (peek() === 45)
               characters2 += delimit(next());
-            atrule = peek(), offset = length2 = strlen(type = characters2 += identifier(caret())), character2++;
+            atrule = peek(), offset = length2 = strlen(type = characters2 += identifier$1(caret())), character2++;
             break;
           case 45:
             if (previous === 45 && strlen(characters2) == 2)
@@ -16314,9 +16314,9 @@ default_1 = Person.default = (0, _createSvgIcon.default)(/* @__PURE__ */ (0, _js
   d: "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4m0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4"
 }), "Person");
 const useAuth = () => {
-  const [identifier2, setIdentifier] = React.useState("");
-  const changeIdentifier = ({ identifier: identifier3 }) => {
-    setIdentifier(identifier3);
+  const [identifier, setIdentifier] = React.useState("");
+  const changeIdentifier = ({ identifier: identifier2 }) => {
+    setIdentifier(identifier2);
   };
   const [password, setPassword] = React.useState("");
   const changePassword = ({ password: password2 }) => {
@@ -16327,7 +16327,7 @@ const useAuth = () => {
     setAccessJwt(accessJwt2);
   };
   return {
-    identifier: identifier2,
+    identifier,
     changeIdentifier,
     password,
     changePassword,
@@ -16364,6 +16364,23 @@ const useProfile = () => {
   const changePostsCount = ({ postsCount: postsCount2 }) => {
     setPostsCount(postsCount2);
   };
+  const changeProfile = ({
+    avatar: avatar2,
+    displayName: displayName2,
+    handle: handle2,
+    description: description2,
+    followersCount: followersCount2,
+    followsCount: followsCount2,
+    postsCount: postsCount2
+  }) => {
+    changeAvatar({ avatar: avatar2 });
+    changeDisplayName({ displayName: displayName2 });
+    changeHandle({ handle: handle2 });
+    changeDescription({ description: description2 });
+    changeFollowersCount({ followersCount: followersCount2 });
+    changeFollowsCount({ followsCount: followsCount2 });
+    changePostsCount({ postsCount: postsCount2 });
+  };
   return {
     avatar,
     changeAvatar,
@@ -16378,7 +16395,8 @@ const useProfile = () => {
     followsCount,
     changeFollowsCount,
     postsCount,
-    changePostsCount
+    changePostsCount,
+    changeProfile
   };
 };
 const useFeed = () => {
@@ -18760,56 +18778,60 @@ const {
   mergeConfig
 } = axios;
 const useBlueSkyApi = ({ auth, proFile, feed }) => {
-  const getSession = async ({
-    identifier: identifier2 = "puupuu-nasake.bsky.social",
-    password = "4e5p-vhk3-hmzi-qm24"
-  }) => {
+  const getSession = async ({}) => {
     try {
-      const response = await axios.post(
-        "https://bsky.social/xrpc/com.atproto.server.createSession",
-        {
-          identifier: identifier2,
-          password
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "localhost"
-          }
-        }
-      );
-      const accessJwt = response["data"]["accessJwt"];
-      auth.changeAccessJwt({ accessJwt });
+      let accessJwt = [];
+      if (false) ;
+      if (true) {
+        const response = await window.api.getSession();
+        accessJwt = response["accessJwt"];
+      }
       console.log(accessJwt);
+      auth.changeAccessJwt({ accessJwt });
     } catch (error) {
     }
   };
   const getProfile = async ({}) => {
     try {
-      const response = await window.api.getProfile();
-      const displayName = response["displayName"];
-      const avatar = response["avatar"];
-      const handle = response["handle"];
-      const description = response["description"];
-      const followersCount = parseInt(response["followersCount"]);
-      const followsCount = parseInt(response["followsCount"]);
-      const postsCount = parseInt(response["postsCount"]);
-      proFile.changeAvatar({ avatar });
-      proFile.changeDisplayName({ displayName });
-      proFile.changeHandle({ handle });
-      proFile.changeDescription({ description });
-      proFile.changeFollowersCount({ followersCount });
-      proFile.changeFollowsCount({ followsCount });
-      proFile.changePostsCount({ postsCount });
+      let profile2 = {
+        displayName: "",
+        avatar: "",
+        handle: "",
+        description: "",
+        followersCount: 0,
+        followsCount: 0,
+        postsCount: 0
+      };
+      if (false) ;
+      if (true) {
+        const response = await window.api.getProfile();
+        profile2 = {
+          displayName: response["displayName"],
+          avatar: response["avatar"],
+          handle: response["handle"],
+          description: response["description"],
+          followersCount: parseInt(response["followersCount"]),
+          followsCount: parseInt(response["followsCount"]),
+          postsCount: parseInt(response["postsCount"])
+        };
+      }
+      proFile.changeProfile({ ...profile2 });
     } catch (error) {
+      console.log(error);
+      proFile.changeProfile({ ...profile });
     }
   };
   const getTimeLine = async ({}) => {
     try {
-      const response = await window.api.getTimeline();
-      feed.changeTimeLine({ timeLine: response });
+      let timeLine = [];
+      var i;
+      if (false) ;
+      if (true) {
+        timeLine = await window.api.getTimeline();
+      }
+      feed.changeTimeLine({ timeLine });
     } catch (error) {
-      console.log(error);
+      feed.changeTimeLine({ timeLine: [] });
     }
   };
   return {
@@ -18969,8 +18991,7 @@ const CustomTheme = () => {
       MuiOutlinedInput: {
         styleOverrides: {
           root: {
-            // デフォルトだと、
-            // ラベルをはみ出させるための小さなmarginがある
+            // デフォルトだとラベルをはみ出させるための小さなmarginがある
             marginTop: 0
           },
           input: {
@@ -18979,13 +19000,10 @@ const CustomTheme = () => {
             height: "auto"
           },
           notchedOutline: {
-            // デフォルトだと、 position が absolute、
-            // ラベルをはみ出させるため上に少しの余白がある
+            // デフォルトだとposition が absolute、ラベルをはみ出させるため上に少しの余白がある
             top: 0,
             legend: {
-              // 内包された legend 要素によって、四角の左側の切り欠きが実現されているので、
-              // 表示されないように。
-              // (SCSS と同様にネスト記述が可能です。)
+              // 内包された legend 要素によって、四角の左側の切り欠きが実現されているので、表示されないようにする。
               display: "none"
             }
           }
