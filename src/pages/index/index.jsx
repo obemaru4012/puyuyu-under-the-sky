@@ -52,6 +52,7 @@ const Index = () => {
   const proFile = useProfile();
   const feed = useFeed();
   const blueSkyApi = useBlueSkyApi({
+    props: props,
     auth: auth,
     proFile: proFile,
     feed: feed,

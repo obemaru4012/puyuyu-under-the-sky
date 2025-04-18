@@ -4,7 +4,7 @@ import axios from "axios";
  * BlueSkyAPI
  * @returns
  */
-const useBlueSkyApi = ({ auth, proFile, feed }) => {
+const useBlueSkyApi = ({ auth, proFile, feed, props }) => {
   // 認証
   const getSession = async ({}) => {
     try {
@@ -15,8 +15,8 @@ const useBlueSkyApi = ({ auth, proFile, feed }) => {
         const response = await axios.post(
           "https://bsky.social/xrpc/com.atproto.server.createSession",
           {
-            identifier: identifier,
-            password: password,
+            identifier: props.user,
+            password: props.password,
           },
           {
             headers: {
@@ -56,7 +56,7 @@ const useBlueSkyApi = ({ auth, proFile, feed }) => {
         const response = await axios.get(
           "https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile",
           {
-            params: { actor: "puupuu-nasake.bsky.social" },
+            params: { actor: props.user },
           }
         );
 
@@ -103,7 +103,7 @@ const useBlueSkyApi = ({ auth, proFile, feed }) => {
             headers: {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "localhost",
-              Authorization: `Bearer `,
+              Authorization: `Bearer ${props.jwt_token}`,
             },
           }
         );
