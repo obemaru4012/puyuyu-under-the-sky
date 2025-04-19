@@ -87,6 +87,9 @@ ipcMain.handle("get-timeline", async (event) => {
         displayName: feed.author.displayName,
         handle: feed.author.handle,
         text: feed.record.text,
+        likeCount: feed.likeCount,
+        replyCount: feed.replyCount,
+        repostCount: feed.repostCount,
         createdAt: new Date(feed.record.createdAt).toLocaleString() ?? "",
       });
     }

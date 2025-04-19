@@ -4,12 +4,14 @@ import ReactDOM from "react-dom";
 // MUI5
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Collapse from "@mui/material/Collapse";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import Fab from "@mui/material/Fab";
 import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
@@ -23,13 +25,16 @@ import { useMediaQuery } from "@mui/material";
 
 // icons
 import AddIcon from "@mui/icons-material/Add";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
+import CachedIcon from "@mui/icons-material/Cached";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import GroupIcon from "@mui/icons-material/Group";
 import HistoryIcon from "@mui/icons-material/History";
+import LoopIcon from "@mui/icons-material/Loop";
 import PersonIcon from "@mui/icons-material/Person";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 
 // hoooks
 import useAuth from "@puts/hooks/useAuth";
@@ -60,6 +65,7 @@ const Index = () => {
 
   // テーマ読み込み
   const customTheme = CustomTheme();
+  const primaryColor = customTheme.palette.primary.main;
 
   // 画面幅が "lg"（1280px以上）なら true、それ未満なら false
   const isLargeUp = useMediaQuery(customTheme.breakpoints.up("lg"));
@@ -105,7 +111,14 @@ const Index = () => {
       <ThemeProvider theme={customTheme}>
         <CssBaseline />
         <Container maxWidth={false} disableGutters={true}>
-          <Box sx={{ padding: 4, backgroundColor: "#1F2326", height: "100%" }}>
+          <Box
+            sx={{
+              padding: isLargeUp || isMediumUp ? 4 : 2,
+              backgroundColor: "#1F2326",
+              height: "100%",
+              minHeight: "100vh",
+            }}
+          >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <Stack direction={"column"} spacing={2}>
@@ -351,7 +364,11 @@ const Index = () => {
                     onChange={handleChange}
                     sx={{ backgroundColor: "#333A40" }}
                   >
-                    <Tab label="@all" id={"all"} sx={{ color: "whitesmoke" }} />
+                    <Tab
+                      label="@timeline"
+                      id={"timeline"}
+                      sx={{ color: "whitesmoke" }}
+                    />
                     <Tab
                       label="@mention"
                       id={"mention"}
@@ -359,11 +376,15 @@ const Index = () => {
                     />
                   </Tabs>
 
-                  <Stack spacing={2} sx={{ marginTop: 2 }}>
-                    {feed.timeLine.map((timeLine) => {
+                  <Stack sx={{ marginTop: 2 }}>
+                    {feed.timeLine.map((timeLine, index) => {
                       return (
                         <React.Fragment>
-                          <Stack direction={"column"} spacing={1}>
+                          <Stack
+                            direction={"column"}
+                            spacing={0.5}
+                            sx={{ marginTop: index == 0 ? 0 : 2 }}
+                          >
                             <Stack
                               direction={"row"}
                               spacing={2}
@@ -400,7 +421,7 @@ const Index = () => {
                                 </Stack>
                               </Stack>
                             </Stack>
-                            <Stack direction={"column"} spacing={0.5}>
+                            <Stack direction={"column"}>
                               <Typography
                                 variant={"body2"}
                                 color={"whitesmoke"}
@@ -409,12 +430,103 @@ const Index = () => {
                                 {timeLine.text}
                               </Typography>
                             </Stack>
+                            <Stack
+                              direction={"row"}
+                              spacing={8}
+                              justifyContent={"start"}
+                              sx={{ paddingTop: 0.5 }}
+                            >
+                              <Button
+                                sx={{
+                                  color: "whitesmoke",
+                                }}
+                                startIcon={
+                                  <ChatBubbleOutlineIcon fontSize={"small"} />
+                                }
+                              >
+                                {timeLine.replyCount >= 1 && (
+                                  <Typography
+                                    variant={"body2"}
+                                    color={"whitesmoke"}
+                                    sx={{
+                                      color: "whitesmoke",
+                                      fontSize: "14px",
+                                    }}
+                                  >
+                                    {timeLine.replyCount}
+                                  </Typography>
+                                )}
+                              </Button>
+                              <Button
+                                sx={{ color: "whitesmoke" }}
+                                startIcon={
+                                  timeLine.likeCount >= 1 ? (
+                                    <FavoriteIcon
+                                      fontSize={"small"}
+                                      sx={{ color: "#ec4899" }}
+                                    />
+                                  ) : (
+                                    <FavoriteBorderIcon fontSize={"small"} />
+                                  )
+                                }
+                              >
+                                {timeLine.likeCount >= 1 && (
+                                  <Typography
+                                    variant={"body2"}
+                                    color={"whitesmoke"}
+                                    sx={{
+                                      color:
+                                        timeLine.likeCount >= 1
+                                          ? "#ec4899"
+                                          : "whitesmoke",
+                                      fontSize: "14px",
+                                    }}
+                                  >
+                                    {timeLine.likeCount}
+                                  </Typography>
+                                )}
+                              </Button>
+                              <Button
+                                sx={{ color: "whitesmoke" }}
+                                startIcon={<LoopIcon fontSize={"small"} />}
+                              >
+                                {timeLine.repostCount >= 1 && (
+                                  <Typography
+                                    variant={"body2"}
+                                    color={"whitesmoke"}
+                                    sx={{
+                                      color: "whitesmoke",
+                                      fontSize: "14px",
+                                    }}
+                                  >
+                                    {timeLine.repostCount}
+                                  </Typography>
+                                )}
+                              </Button>
+                            </Stack>
                           </Stack>
 
                           <Divider variant="middle" />
                         </React.Fragment>
                       );
                     })}
+                    {feed.timeLine.length == 0 && (
+                      <Stack direction={"column"} spacing={1}>
+                        <Stack
+                          direction={"row"}
+                          spacing={2}
+                          alignItems={"center"}
+                          justifyContent={"center"}
+                        >
+                          <IconButton
+                            sx={{ color: "whitesmoke" }}
+                            onClick={blueSkyApi.getTimeLine}
+                          >
+                            <CachedIcon />
+                          </IconButton>
+                        </Stack>
+                      </Stack>
+                    )}
                   </Stack>
                 </Box>
               </Grid>

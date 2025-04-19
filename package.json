@@ -7,7 +7,7 @@
     "test": "echo \"npm command test\" && exit 1",
     "dev": "vite dev",
     "build": "vite build --emptyOutDir",
-    "electron": "electron ."
+    "electron": "vite build --emptyOutDir && electron ."
   },
   "keywords": [],
   "author": "",

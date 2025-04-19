@@ -1,3 +1,4 @@
+import React from "react";
 import axios from "axios";
 
 /**
@@ -85,6 +86,7 @@ const useBlueSkyApi = ({ auth, proFile, feed, props }) => {
       }
 
       proFile.changeProfile({ ...profile });
+      return true;
     } catch (error) {
       console.log(error);
       proFile.changeProfile({ ...profile });
@@ -107,6 +109,7 @@ const useBlueSkyApi = ({ auth, proFile, feed, props }) => {
             },
           }
         );
+        console.log(response["data"]);
         const feeds = response["data"]["feed"] ?? [];
         for (var i = 0; feeds.length > i; i++) {
           const feed = feeds[i].post;
@@ -115,6 +118,9 @@ const useBlueSkyApi = ({ auth, proFile, feed, props }) => {
             displayName: feed.author.displayName,
             handle: feed.author.handle,
             text: feed.record.text,
+            likeCount: feed.likeCount,
+            replyCount: feed.replyCount,
+            repostCount: feed.repostCount,
             createdAt: new Date(feed.record.createdAt).toLocaleString() ?? "",
           });
         }
@@ -125,10 +131,19 @@ const useBlueSkyApi = ({ auth, proFile, feed, props }) => {
         timeLine = await window.api.getTimeline();
       }
       feed.changeTimeLine({ timeLine: timeLine });
+      return true;
     } catch (error) {
+      console.log("error");
+      console.log(error);
       feed.changeTimeLine({ timeLine: [] });
     }
   };
+
+  React.useEffect(() => {
+    // 初期処理
+    const initialProc = async () => {};
+    initialProc();
+  }, []);
 
   return {
     getSession,
